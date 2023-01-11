@@ -15,8 +15,13 @@
       <div class="col">
         <img src=".{{ url_for('static', filename='flask.jpeg') }}." class="rounded mx-auto d-block img-fluid" alt="...">
       </div>
-      
-      
     </div>
+
+      <div class="row mt-5 align-items-center">
+        <div class="col">
+          <a class="btn btn-primary" href="{{ url_for('login') }}" role="button">Login</a>
+          <a class="btn btn-primary" href="{{ url_for('registration') }}" role="button">Register</a>
+        </div>
+      </div>
   </div>
 {% endblock %}

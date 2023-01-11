@@ -27,6 +27,10 @@ def index():
 
 
 
+@app.route('/dash')
+def dash():
+    return render_template('dash.html')
+    
 @app.route('/about')
 def about():
     return render_template('about.html')
