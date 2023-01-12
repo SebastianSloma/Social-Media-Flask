@@ -13,6 +13,9 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('dash') }}">Dashboard</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('articles') }}">Posts</a>
+          </li>
           {% endif %}
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('about') }}">About</a>
@@ -23,6 +26,7 @@
          
         </ul>
         <ul class="navbar-nav navbar-right me-3 mb-2 mb-lg-0">
+          
           {% if session.logged_in %}
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
