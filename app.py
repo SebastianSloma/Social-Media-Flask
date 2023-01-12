@@ -7,7 +7,6 @@ from passlib.hash import sha256_crypt
 
 
 app = Flask(__name__)
-
 app.config['SECRET_KEY'] = 'VeryWiredK3y!'
 
 app.config['MYSQL_HOST'] = 'localhost'
@@ -27,10 +26,6 @@ def index():
 
 
 
-@app.route('/dash')
-def dash():
-    return render_template('dash.html')
-    
 @app.route('/about')
 def about():
     return render_template('about.html')
@@ -41,6 +36,7 @@ def contact():
     return render_template('contact.html')
 
 
+# Register Form Class
 class RegisterForm(Form):
     name = StringField('Name', [validators.Length(min=1, max=50)])
     username = StringField('Username', [validators.Length(min=4, max=25)])
@@ -52,6 +48,7 @@ class RegisterForm(Form):
     confirm = PasswordField('Confirm Password')
 
 
+# User register
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
     form = RegisterForm(request.form)
@@ -72,6 +69,7 @@ def registration():
 
     return render_template('registration.html', form=form)
 
+# User login
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -81,7 +79,8 @@ def login():
 
         cur = mysql.connection.cursor()
 
-        result = cur.execute("SELECT * FROM users WHERE username = %s", [username])
+        result = cur.execute(
+            "SELECT * FROM users WHERE username = %s", [username])
 
         if result > 0:
             data = cur.fetchone()
@@ -92,7 +91,7 @@ def login():
                 session['username'] = username
 
                 flash('You are now logged in', 'success')
-                return redirect(url_for('index'))
+                return redirect(url_for('dash'))
             else:
                 error = 'Invalid login'
                 return render_template('login.html', error=error)
@@ -103,6 +102,19 @@ def login():
 
     return render_template('login.html')
 
+
+
+# Logout
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You are now logged out', 'success')
+    return redirect(url_for('login'))
+
+# Dashboard
+@app.route('/dash')
+def dash():
+    return render_template('dash.html')
 
 
 if __name__ == '__main__':
