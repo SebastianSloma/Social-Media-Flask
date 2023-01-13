@@ -223,7 +223,11 @@ def delete_post(id):
 # Users
 @app.route('/users')
 def users():
-    return render_template('users.html')
+    cur = mysql.connection.cursor()
+    result = cur.execute("SELECT name, username, id, email FROM users")
+    users = cur.fetchall()
+    cur.close()
+    return render_template('users.html', users=users)
 
 if __name__ == '__main__':
     app.run(debug=True)
