@@ -12,7 +12,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'VeryWiredK3y!'
 
 
-
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
@@ -36,10 +35,9 @@ def about():
 def contact():
     return render_template('contact.html')
 
-
-
-
 # Register Form Class
+
+
 class RegisterForm(Form):
     name = StringField('Name', [validators.Length(min=1, max=50)])
     username = StringField('Username', [validators.Length(min=4, max=25)])
@@ -133,7 +131,7 @@ def logout():
 @is_logged_in
 def dash():
     cur = mysql.connection.cursor()
-    result = cur.execute("SELECT * FROM posts WHERE author = %s", [session['username']])
+    result = cur.execute("SELECT * FROM posts")
     posts = cur.fetchall()
     if result > 0:
         return render_template('dash.html', posts=posts)
@@ -141,24 +139,25 @@ def dash():
         msg = 'No Posts Found'
         return render_template('dash.html', msg=msg)
     # cur.close()
-    
-
 
 
 @app.route('/post/<string:id>/')
 def post(id):
-   
+
     cur = mysql.connection.cursor()
     result = cur.execute("SELECT * FROM posts WHERE id = %s", [id])
     post = cur.fetchone()
 
     return render_template('post.html', post=post)
 
+
 class PostForm(Form):
     title = StringField('Title', [validators.Length(min=1, max=200)])
     body = TextAreaField('Body', [validators.Length(min=30)])
 
 # Add post
+
+
 @app.route('/add_post', methods=['GET', 'POST'])
 @is_logged_in
 def add_post():
@@ -167,7 +166,8 @@ def add_post():
         title = form.title.data
         body = form.body.data
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO posts(title, body, author) VALUES(%s, %s, %s)",(title, body, session['username']))
+        cur.execute("INSERT INTO posts(title, body, author) VALUES(%s, %s, %s)",
+                    (title, body, session['username']))
         mysql.connection.commit()
         cur.close()
 
@@ -196,7 +196,8 @@ def edit_post(id):
 
         cur = mysql.connection.cursor()
         app.logger.info(title)
-        cur.execute ("UPDATE posts SET title=%s, body=%s WHERE id=%s",(title, body, id))
+        cur.execute("UPDATE posts SET title=%s, body=%s WHERE id=%s",
+                    (title, body, id))
         mysql.connection.commit()
         cur.close()
 
@@ -205,6 +206,7 @@ def edit_post(id):
         return redirect(url_for('dash'))
 
     return render_template('edit_post.html', form=form)
+
 
 # Delete post
 @app.route('/delete_post/<string:id>', methods=['POST'])
@@ -224,10 +226,68 @@ def delete_post(id):
 @app.route('/users')
 def users():
     cur = mysql.connection.cursor()
-    result = cur.execute("SELECT name, username, id, email FROM users")
+    result = cur.execute("SELECT * FROM users")
     users = cur.fetchall()
     cur.close()
     return render_template('users.html', users=users)
+
+
+#  Single user
+@app.route('/user/<string:id>/')
+def user(id):
+    cur = mysql.connection.cursor()
+    result = cur.execute("SELECT * FROM users WHERE id = %s", [id])
+    user = cur.fetchone()
+
+    return render_template('user.html', user=user)
+
+
+# Edit users
+@app.route('/edit_user/<string:id>', methods=['GET', 'POST'])
+@is_logged_in
+def edit_user(id):
+    cur = mysql.connection.cursor()
+    result = cur.execute("SELECT * FROM users WHERE id = %s", [id])
+    user = cur.fetchone()
+    cur.close()
+    form = RegisterForm(request.form)
+    form.name.data = user['name']
+    form.username.data = user['username']
+    form.email.data = user['email']
+
+    if request.method == 'POST' and form.validate():
+        name = request.form['name']
+        username = request.form['username']
+        email = request.form['email']
+
+        cur = mysql.connection.cursor()
+        app.logger.info(name)
+        cur.execute("UPDATE users SET name=%s, username=%s, email=%s WHERE id=%s",
+                    (name, username, email, id))
+        mysql.connection.commit()
+        cur.close()
+
+        flash('User Updated', 'success')
+
+        return redirect(url_for('users'))
+
+    return render_template('edit_user.html', form=form)
+
+# Delete user
+
+
+@app.route('/delete_user/<string:id>', methods=['POST'])
+@is_logged_in
+def delete_user(id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM users WHERE id = %s", [id])
+    mysql.connection.commit()
+    cur.close()
+
+    flash('User Deleted', 'success')
+
+    return redirect(url_for('users'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
