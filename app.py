@@ -255,7 +255,7 @@ def edit_user(id):
     form.username.data = user['username']
     form.email.data = user['email']
 
-    if request.method == 'POST' and form.validate():
+    if request.method == 'POST' and 'name' in request.form and 'username' in request.form and 'email' in request.form:
         name = request.form['name']
         username = request.form['username']
         email = request.form['email']
@@ -263,7 +263,7 @@ def edit_user(id):
         cur = mysql.connection.cursor()
         app.logger.info(name)
         cur.execute("UPDATE users SET name=%s, username=%s, email=%s WHERE id=%s",
-                    (name, username, email, id))
+                    (name, username, email, (id)))
         mysql.connection.commit()
         cur.close()
 
