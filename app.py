@@ -134,46 +134,35 @@ def logout():
 def dash():
     cur = mysql.connection.cursor()
     result = cur.execute("SELECT * FROM posts WHERE author = %s", [session['username']])
-    articles = cur.fetchall()
+    posts = cur.fetchall()
     if result > 0:
-        return render_template('dash.html', articles=articles)
+        return render_template('dash.html', posts=posts)
     else:
-        msg = 'No Articles Found'
+        msg = 'No Posts Found'
         return render_template('dash.html', msg=msg)
-    cur.close()
+    # cur.close()
     
 
-@app.route('/articles')
-def articles():
-    cur = mysql.connection.cursor()
-    result = cur.execute("SELECT * FROM posts")
-    articles = cur.fetchall()
 
-    if result > 0:
-        return render_template('articles.html', articles=articles)
-    else:
-        msg = 'No Articles Found'
-        return render_template('articles.html', msg=msg)
-    cur.close()
 
-@app.route('/article/<string:id>/')
-def article(id):
+@app.route('/post/<string:id>/')
+def post(id):
    
     cur = mysql.connection.cursor()
     result = cur.execute("SELECT * FROM posts WHERE id = %s", [id])
-    article = cur.fetchone()
+    post = cur.fetchone()
 
-    return render_template('article.html', article=article)
+    return render_template('post.html', post=post)
 
-class ArticleForm(Form):
+class PostForm(Form):
     title = StringField('Title', [validators.Length(min=1, max=200)])
     body = TextAreaField('Body', [validators.Length(min=30)])
 
-# Add Article
-@app.route('/add_article', methods=['GET', 'POST'])
+# Add post
+@app.route('/add_post', methods=['GET', 'POST'])
 @is_logged_in
-def add_article():
-    form = ArticleForm(request.form)
+def add_post():
+    form = PostForm(request.form)
     if request.method == 'POST' and form.validate():
         title = form.title.data
         body = form.body.data
@@ -182,24 +171,24 @@ def add_article():
         mysql.connection.commit()
         cur.close()
 
-        flash('Article Created', 'success')
+        flash('Post Created', 'success')
 
         return redirect(url_for('dash'))
 
     return render_template('add_posts.html', form=form)
 
 
-# Edit Article
-@app.route('/edit_article/<string:id>', methods=['GET', 'POST'])
+# Edit Post
+@app.route('/edit_post/<string:id>', methods=['GET', 'POST'])
 @is_logged_in
-def edit_article(id):
+def edit_post(id):
     cur = mysql.connection.cursor()
     result = cur.execute("SELECT * FROM posts WHERE id = %s", [id])
-    article = cur.fetchone()
+    post = cur.fetchone()
     cur.close()
-    form = ArticleForm(request.form)
-    form.title.data = article['title']
-    form.body.data = article['body']
+    form = PostForm(request.form)
+    form.title.data = post['title']
+    form.body.data = post['body']
 
     if request.method == 'POST' and form.validate():
         title = request.form['title']
@@ -215,20 +204,26 @@ def edit_article(id):
 
         return redirect(url_for('dash'))
 
-    return render_template('edit_posts.html', form=form)
+    return render_template('edit_post.html', form=form)
 
-# Delete Article
-@app.route('/delete_article/<string:id>', methods=['POST'])
+# Delete post
+@app.route('/delete_post/<string:id>', methods=['POST'])
 @is_logged_in
-def delete_article(id):
+def delete_post(id):
     cur = mysql.connection.cursor()
     cur.execute("DELETE FROM posts WHERE id = %s", [id])
     mysql.connection.commit()
     cur.close()
 
-    flash('Article Deleted', 'success')
+    flash('Post Deleted', 'success')
 
     return redirect(url_for('dash'))
+
+
+# Users
+@app.route('/users')
+def users():
+    return render_template('users.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
