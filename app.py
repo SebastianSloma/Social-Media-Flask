@@ -1,6 +1,6 @@
 # import library
 
-from flask import Flask, render_template, redirect, url_for, flash, request, session, logging
+from flask import Flask, render_template, redirect, url_for, flash, request, session
 from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
@@ -287,6 +287,7 @@ def delete_user(id):
     flash('User Deleted', 'success')
 
     return redirect(url_for('users'))
+
 
 
 if __name__ == '__main__':
