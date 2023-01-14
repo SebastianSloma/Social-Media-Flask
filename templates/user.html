@@ -9,7 +9,7 @@
  <h1>User</h1>
  <div class="row row-cols-1 row-cols-md-3 g-4">
   
- 
+  
    
    <div class="col">
      <div class="card">
@@ -17,19 +17,21 @@
        <div class="card-body">
          <h5 class="card-title">Card title</h5>
          <p class="card-text">
+          
             <div class="col">
                <p>Name: {{user.name}}</p>
                <p>Username: {{user.username}}</p>
                <p>ID: {{user.id}}</p>
-               <p>Email: {{user.email}}</p>
-               
+               <p>Email: {{user.email}}</p>  
             </div>
+
             <a href="/edit_user/{{user.id}}" class="btn btn-outline-success pull-right">Edit</a>
 
             <form action="{{url_for('delete_user', id=user.id)}}" method="POST">
             <input type="hidden" name="method" value="DELETE">
             <input type="submit" value="Delete" class="btn btn-danger">
             </form>
+         
          </p>
        </div>
      </div>
