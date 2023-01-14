@@ -4,7 +4,7 @@ from flask import Flask, render_template, redirect, url_for, flash, request, ses
 from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
-
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from functools import wraps
 
 
