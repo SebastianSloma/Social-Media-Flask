@@ -2,7 +2,9 @@
 
 from flask import Flask, render_template, redirect, url_for, flash, request, session
 from flask_mysqldb import MySQL
-from wtforms import Form, StringField, TextAreaField, PasswordField, validators
+from wtforms import Form, StringField, TextAreaField, PasswordField, validators, SubmitField
+from wtforms.validators import DataRequired, EqualTo, Length
+from flask_wtf import FlaskForm
 from passlib.hash import sha256_crypt
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from functools import wraps
@@ -133,12 +135,12 @@ def dash():
     cur = mysql.connection.cursor()
     result = cur.execute("SELECT * FROM posts")
     posts = cur.fetchall()
+    cur.close()
     if result > 0:
         return render_template('dash.html', posts=posts)
     else:
         msg = 'No Posts Found'
         return render_template('dash.html', msg=msg)
-    # cur.close()
 
 
 @app.route('/post/<string:id>/')
@@ -289,6 +291,43 @@ def delete_user(id):
     return redirect(url_for('users'))
 
 
+
+# # Pass Stuff To Navbar
+@app.context_processor
+def base():
+	form = SearchForm()
+	return dict(form=form)
+
+class SearchForm(FlaskForm):
+	searched = StringField("Searched", validators=[DataRequired()])
+	submit = SubmitField("Submit")
+
+
+
+
+
+@app.route('/search', methods=['GET', 'POST'])
+@is_logged_in
+def search():
+    searched = SearchForm()
+    cur = mysql.connection.cursor()
+    result = cur.execute("SELECT * FROM posts")
+    posts = cur.fetchall()
+    cur.close()
+
+    return render_template('search_result.html', searched=searched, posts=posts)
+
+
+
+@app.route('/search_result')
+def search_result():
+    
+
+    return render_template('search_result.html')
+
+@app.route('/email')
+def email():
+    return render_template('email.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
