@@ -291,43 +291,46 @@ def delete_user(id):
     return redirect(url_for('users'))
 
 
-
 # # Pass Stuff To Navbar
 @app.context_processor
 def base():
-	form = SearchForm()
-	return dict(form=form)
+    form = SearchForm()
+    return dict(form=form)
+
 
 class SearchForm(FlaskForm):
-	searched = StringField("Searched", validators=[DataRequired()])
-	submit = SubmitField("Submit")
-
-
-
+    searched = StringField("Searched", validators=[DataRequired()])
+    submit = SubmitField("Submit")
 
 
 @app.route('/search', methods=['GET', 'POST'])
 @is_logged_in
 def search():
-    searched = SearchForm()
     cur = mysql.connection.cursor()
-    result = cur.execute("SELECT * FROM posts")
+    cur.execute("SELECT * FROM posts")
     posts = cur.fetchall()
-    cur.close()
+    if request.method == 'POST':
+        search = request.form['search']
+        cur = mysql.connection.cursor()
+        result = cur.execute("SELECT * FROM posts WHERE title LIKE %s")
+        cur.execute(search, ('%' + search + '%'))
+        results = cur.fetchall()
+        cur.close()
+        flash('Showing result:  ' + search, 'success')
 
-    return render_template('search_result.html', searched=searched, posts=posts)
-
+    return render_template('search_result.html', results=results, result=result, search=search, posts=posts)
 
 
 @app.route('/search_result')
 def search_result():
-    
 
     return render_template('search_result.html')
+
 
 @app.route('/email')
 def email():
     return render_template('email.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
