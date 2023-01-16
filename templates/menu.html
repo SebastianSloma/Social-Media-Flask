@@ -43,9 +43,9 @@
         </ul>
 
         
-        <form method="POST" action="{{ url_for('search_result') }}" class="d-flex" role="search">
+        <form method="GET" action="{{ url_for('search_result') }}" class="d-flex" role="search">
         
-          <input class="form-control me-2 bg-dark" type="search" placeholder="Search" aria-label="Search" name="search">
+          <input class="form-control me-2 bg-dark" type="search" placeholder="Search" aria-label="Search" name="searched">
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
       </div>

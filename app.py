@@ -291,7 +291,19 @@ def delete_user(id):
     return redirect(url_for('users'))
 
 
-# # Pass Stuff To Navbar
+class PostForm(Form):
+    title = StringField('Title', [validators.Length(min=1, max=200)])
+    body = TextAreaField('Body', [validators.Length(min=30)])
+
+
+
+
+
+class Posts(PostForm):
+	title = StringField('Title', validators=[DataRequired()])
+	content = TextAreaField('Body', validators=[DataRequired()])
+	
+
 @app.context_processor
 def base():
     form = SearchForm()
@@ -306,19 +318,17 @@ class SearchForm(FlaskForm):
 @app.route('/search', methods=['GET', 'POST'])
 @is_logged_in
 def search():
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM posts")
-    posts = cur.fetchall()
-    if request.method == 'POST':
-        search = request.form['search']
-        cur = mysql.connection.cursor()
-        result = cur.execute("SELECT * FROM posts WHERE title LIKE %s")
-        cur.execute(search, ('%' + search + '%'))
-        results = cur.fetchall()
-        cur.close()
-        flash('Showing result:  ' + search, 'success')
+    
+	form = SearchForm()
+	posts = Posts.query
+	if form.validate_on_submit():	
+		post.searched = form.searched.data
+		posts = posts.filter(Posts.content.like('%' + post.searched + '%'))
+		posts = posts.order_by(Posts.title).all()
 
-    return render_template('search_result.html', results=results, result=result, search=search, posts=posts)
+		return render_template("search_result.html",form=form, searched = post.searched, posts = posts)
+    
+
 
 
 @app.route('/search_result')

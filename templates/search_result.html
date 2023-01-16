@@ -8,13 +8,23 @@
 
   
 
-  <h1>Search Results</h1>
-<ul class="list-group">
+	<br/>
+	<h2>You Searched For: <em>{{ searched }}</em></h2>
+	
+	<br/>
+
+	{% if posts %}
+
+	
   {% for post in posts %}
-    <li class="list-group-item"><a href="post/{{post.id}}">{{post.title}}</a><small>Written by {{post.author}} on {{post.create_date}}</small></li>
-  {% endfor %}
-  
-</ul>>
+  <li class="list-group-item"><a href="post/{{post.title}}">{{post.title}}</a><small>Written by {{post.author}} on {{post.create_date}}</small></li>
+
+	{% endfor %}
+
+	{% else %}
+	Sorry, your search term: <strong>{{ searched }}</strong> was not found...
+	{% endif %}
+
 
 
 {% endblock %}
