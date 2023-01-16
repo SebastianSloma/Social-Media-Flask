@@ -17,7 +17,11 @@
 
 	
   {% for post in posts %}
-  <li class="list-group-item"><a href="post/{{post.title}}">{{post.title}}</a><small>Written by {{post.author}} on {{post.create_date}}</small></li>
+  <ul class="list-group">
+	{% for post in posts %}
+	  <li class="list-group-item"><a href="post/{{post.id}}">{{post.title}}</a><small>Written by {{post.author}} on {{post.create_date}}</small></li>
+	{% endfor %}
+	
 
 	{% endfor %}
 

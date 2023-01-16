@@ -26,7 +26,7 @@
                <p>Email: {{user.email}}</p>  
             </div>
 
-            {% if session.logged_in == user.username %}
+            {% if session.username == user.username %}
 
             <a href="/edit_user/{{user.id}}" class="btn btn-outline-success pull-right">Edit</a>
 

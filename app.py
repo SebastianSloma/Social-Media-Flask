@@ -291,50 +291,21 @@ def delete_user(id):
     return redirect(url_for('users'))
 
 
-class PostForm(Form):
-    title = StringField('Title', [validators.Length(min=1, max=200)])
-    body = TextAreaField('Body', [validators.Length(min=30)])
-
-
-
-
-
-class Posts(PostForm):
-	title = StringField('Title', validators=[DataRequired()])
-	content = TextAreaField('Body', validators=[DataRequired()])
-	
-
-@app.context_processor
-def base():
-    form = SearchForm()
-    return dict(form=form)
-
-
-class SearchForm(FlaskForm):
-    searched = StringField("Searched", validators=[DataRequired()])
-    submit = SubmitField("Submit")
-
-
-@app.route('/search', methods=['GET', 'POST'])
-@is_logged_in
-def search():
-    
-	form = SearchForm()
-	posts = Posts.query
-	if form.validate_on_submit():	
-		post.searched = form.searched.data
-		posts = posts.filter(Posts.content.like('%' + post.searched + '%'))
-		posts = posts.order_by(Posts.title).all()
-
-		return render_template("search_result.html",form=form, searched = post.searched, posts = posts)
-    
-
 
 
 @app.route('/search_result')
-def search_result():
 
-    return render_template('search_result.html')
+def search_result():
+    cur = mysql.connection.cursor()
+    result = cur.execute("SELECT * FROM posts WHERE title LIKE 's%' "   )
+    posts = cur.fetchall()
+    cur.close()
+    if result > 0:
+        return render_template('search_result.html', posts=posts)
+    else:
+        msg = 'No Posts Found'
+        return render_template('search_result.html', msg=msg)
+
 
 
 @app.route('/email')
