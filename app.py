@@ -1,19 +1,18 @@
-# import library
+# Import library
 
 from flask import Flask, render_template, redirect, url_for, flash, request, session
 from flask_mysqldb import MySQL
-from wtforms import Form, StringField, TextAreaField, PasswordField, validators, SubmitField
-from wtforms.validators import DataRequired, EqualTo, Length
-from flask_wtf import FlaskForm
+from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
-from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from functools import wraps
 
+# Create flask instance
 
 app = Flask(__name__)
+# Secret key
 app.config['SECRET_KEY'] = 'VeryWiredK3y!'
 
-
+# MySql db
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
@@ -51,7 +50,7 @@ class RegisterForm(Form):
     confirm = PasswordField('Confirm Password')
 
 
-# User register
+# User register page
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
     form = RegisterForm(request.form)
@@ -72,7 +71,8 @@ def registration():
 
     return render_template('registration.html', form=form)
 
-# User login
+
+# User login page
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -126,7 +126,7 @@ def logout():
     flash('You are now logged out', 'success')
     return redirect(url_for('login'))
 
-# Dashboard
+# Create dashboard
 
 
 @app.route('/dash')
@@ -142,7 +142,7 @@ def dash():
         msg = 'No Posts Found'
         return render_template('dash.html', msg=msg)
 
-
+# Single post page
 @app.route('/post/<string:id>/')
 def post(id):
 
@@ -157,7 +157,7 @@ class PostForm(Form):
     title = StringField('Title', [validators.Length(min=1, max=200)])
     body = TextAreaField('Body', [validators.Length(min=30)])
 
-# Add post
+# Add post function
 
 
 @app.route('/add_post', methods=['GET', 'POST'])
@@ -180,7 +180,7 @@ def add_post():
     return render_template('add_posts.html', form=form)
 
 
-# Edit Post
+# Edit Post function
 @app.route('/edit_post/<string:id>', methods=['GET', 'POST'])
 @is_logged_in
 def edit_post(id):
@@ -210,7 +210,7 @@ def edit_post(id):
     return render_template('edit_post.html', form=form)
 
 
-# Delete post
+# Delete post function
 @app.route('/delete_post/<string:id>', methods=['POST'])
 @is_logged_in
 def delete_post(id):
@@ -224,7 +224,7 @@ def delete_post(id):
     return redirect(url_for('dash'))
 
 
-# Users
+# Users page
 @app.route('/users')
 def users():
     cur = mysql.connection.cursor()
@@ -244,7 +244,7 @@ def user(id):
     return render_template('user.html', user=user)
 
 
-# Edit users
+# Edit users 
 @app.route('/edit_user/<string:id>', methods=['GET', 'POST'])
 @is_logged_in
 def edit_user(id):
@@ -290,21 +290,18 @@ def delete_user(id):
 
     return redirect(url_for('users'))
 
+# Search post function
 
-
-
-@app.route('/search_result')
+@app.route('/search_result', methods=["GET", "POST"])
 def search_result():
-    cur = mysql.connection.cursor()
-    result = cur.execute("SELECT * FROM posts WHERE title LIKE 's%' "   )
-    posts = cur.fetchall()
-    cur.close()
-    if result > 0:
-        return render_template('search_result.html', posts=posts)
-    else:
-        msg = 'No Posts Found'
-        return render_template('search_result.html', msg=msg)
 
+    search = request.args.get("search")
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "SELECT * FROM posts WHERE title LIKE %s OR body LIKE %s", (search, search))
+    mysql.connection.commit()
+    posts = cur.fetchall()
+    return render_template('search_result.html', posts=posts, search=search)
 
 
 @app.route('/email')
