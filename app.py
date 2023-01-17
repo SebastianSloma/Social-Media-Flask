@@ -292,7 +292,7 @@ def delete_user(id):
 
 # Search post function
 
-@app.route('/search_result', methods=["GET", "POST"])
+@app.route('/search_result', methods=["GET"])
 def search_result():
 
     search = request.args.get("search")
