@@ -5,7 +5,7 @@ Mini Social Media app
 
 ## Features
 
-- Add, edit, delete posts
+- Add, edit, delete, search posts
 - Register and login Users
 - Edit and delete Users
 
