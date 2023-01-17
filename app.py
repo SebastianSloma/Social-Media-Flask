@@ -294,7 +294,6 @@ def delete_user(id):
 
 
 @app.route('/search_result')
-
 def search_result():
     cur = mysql.connection.cursor()
     result = cur.execute("SELECT * FROM posts WHERE title LIKE 's%' "   )

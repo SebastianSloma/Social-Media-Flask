@@ -6,8 +6,8 @@
 
 {% block content %}
 
- <h1>Users</h1>
- <div class="row row-cols-1 row-cols-md-3 g-4">
+ <h2 class=" m-lg-3">Users</h2>
+ <div class="row row-cols-1 row-cols-md-4 g-3 m-lg-3">
   
    {% for user in users %}
    
@@ -15,14 +15,14 @@
      <div class="card">
       <img src="{{ url_for('static', filename='avatar.png') }}" class="rounded mx-auto d-block img-fluid">
        <div class="card-body">
-         <h5 class="card-title">Card title</h5>
+         <h5 class="card-title">{{user.name}}</h5>
          <p class="card-text">
             <div class="col">
                <p>Name: {{user.name}}</p>
                <p>Username: {{user.username}}</p>
                <p>ID: {{user.id}}</p>
                <p>Email: {{user.email}}</p>
-               <a class="btn btn-success" href="user/{{user.id}}"> Show user</a>
+               <a class="btn btn-primary" href="user/{{user.id}}"> Show user</a>
                </form>
             </div>
          </p>

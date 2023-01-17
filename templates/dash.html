@@ -5,17 +5,20 @@
 
 
 {% block content %}
-<h1>Dashboard <small> Welcome {{session.username}} </small></h1>
-<a class="btn btn-success" href="/add_post"> Add Post</a>
-  
+<div class="m-lg-3">
 
-  <h1>Posts</h1>
-<ul class="list-group">
-  {% for post in posts %}
-    <li class="list-group-item"><a href="post/{{post.id}}">{{post.title}}</a><small>Written by {{post.author}} on {{post.create_date}}</small></li>
-  {% endfor %}
+  <h1>Dashboard <small> Welcome {{session.username}} </small></h1>
+  <a class="btn btn-success mb-md-2" href="/add_post"> Add Post</a>
   
-</ul>>
+  
+  <h2>Posts</h2>
+  <ul class="list-group">
+    {% for post in posts %}
+    <li class="list-group-item"><a href="post/{{post.id}}">{{post.title}}</a><small>Written by {{post.author}} on {{post.create_date}}</small></li>
+    {% endfor %}
+    
+  </ul>>
+</div>
 
 
 {% endblock %}

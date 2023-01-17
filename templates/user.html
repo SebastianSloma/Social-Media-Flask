@@ -5,8 +5,10 @@
 
 
 {% block content %}
+<div class="m-lg-3">
 
- <h1>User</h1>
+
+ <h2>User</h2>
  <div class="row row-cols-1 row-cols-md-3 g-4">
   
   
@@ -15,7 +17,7 @@
      <div class="card">
       <img src="{{ url_for('static', filename='avatar.png') }}" class="rounded mx-auto d-block img-fluid">
        <div class="card-body">
-         <h5 class="card-title">Card title</h5>
+         <h5 class="card-title">{{user.name}}</h5>
          <p class="card-text">
           
             <div class="col">
@@ -25,26 +27,29 @@
                <p>ID: {{user.id}}</p>
                <p>Email: {{user.email}}</p>  
             </div>
+            <div>
 
-            {% if session.username == user.username %}
-
-            <a href="/edit_user/{{user.id}}" class="btn btn-outline-success pull-right">Edit</a>
-
-            <form action="{{url_for('delete_user', id=user.id)}}" method="POST">
-            <input type="hidden" name="method" value="DELETE">
-            <input type="submit" value="Delete" class="btn btn-danger">
-            </form>
+              
+              
+              <form action="{{url_for('delete_user', id=user.id)}}" method="POST">
+                <a class="btn btn-primary" href="{{ url_for('users') }}" role="button">Back to Users</a>
+                {% if session.username == user.username %}
+                <a href="/edit_user/{{user.id}}" class="btn btn-outline-primary pull-right">Edit</a>
+                <input type="hidden" name="method" value="DELETE">
+                <input type="submit" value="Delete" class="btn btn-danger">
+              </form>
+            </div>
          
             {% else %}
- <div class="alert alert-warning alert-dismissible fade show" role="alert">
-	  Sorry! You Can't Edit This User...
-	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-	</div>
-
-	<h2>Access Denied!</h2>
-	<p>Sorry, you cannot access this user profile...</p>
-
-  {% endif %}
+            
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              Sorry! You Can't Edit This User...
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            
+            {% endif %}
+            
          </p>
        </div>
      </div>
@@ -53,6 +58,6 @@
  </div>
 
 
- 
+</div>
 
     {% endblock %}
