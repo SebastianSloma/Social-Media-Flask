@@ -13,10 +13,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'VeryWiredK3y!'
 
 # MySql db
-app.config['MYSQL_HOST'] = 'sebastiansloma.mysql.pythonanywhere-services.com'
-app.config['MYSQL_USER'] = 'sebastiansloma'
-app.config['MYSQL_PASSWORD'] = 'python4952'
-app.config['MYSQL_DB'] = 'sebastiansloma$social'
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'root'
+app.config['MYSQL_DB'] = 'socialmedia'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
