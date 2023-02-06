@@ -13,10 +13,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'VeryWiredK3y!'
 
 # MySql db
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'root'
-app.config['MYSQL_DB'] = 'socialmedia'
+app.config['MYSQL_HOST'] = 'sebastiansloma.mysql.pythonanywhere-services.com'
+app.config['MYSQL_USER'] = 'sebastiansloma'
+app.config['MYSQL_PASSWORD'] = 'python4952'
+app.config['MYSQL_DB'] = 'sebastiansloma$social'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
@@ -143,6 +143,8 @@ def dash():
         return render_template('dash.html', msg=msg)
 
 # Single post page
+
+
 @app.route('/post/<string:id>/')
 def post(id):
 
@@ -244,7 +246,7 @@ def user(id):
     return render_template('user.html', user=user)
 
 
-# Edit users 
+# Edit users
 @app.route('/edit_user/<string:id>', methods=['GET', 'POST'])
 @is_logged_in
 def edit_user(id):
@@ -291,6 +293,7 @@ def delete_user(id):
     return redirect(url_for('users'))
 
 # Search post function
+
 
 @app.route('/search_result', methods=["GET"])
 def search_result():
